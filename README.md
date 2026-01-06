@@ -110,7 +110,7 @@
             <p class="text-gray-500 font-medium">Твоя автоматизація починається тут</p>
         </div>
 
-        <!-- КНОПКА TELEGRAM (Оновлена) -->
+        <!-- КНОПКА TELEGRAM -->
         <a href="https://t.me/landosikmykhal_bot" target="_blank" class="block w-full mb-8 transform transition-all hover:-translate-y-1 hover:shadow-lg group relative overflow-hidden rounded-xl">
             <div class="bg-telegram hover:bg-telegramHover text-white p-4 flex items-center justify-center gap-4 transition-colors relative z-10">
                 
@@ -167,7 +167,7 @@
                 </div>
             </div>
 
-            <!-- Терміновість (Радіо-кнопки замість селекта для сучасності) -->
+            <!-- Терміновість -->
             <div>
                 <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Терміновість</label>
                 <div class="grid grid-cols-3 gap-3">
@@ -243,9 +243,7 @@
             e.preventDefault();
 
             // Збираємо дані
-            // Для радіо кнопок знаходимо обрану
             const urgency = document.querySelector('input[name="urgency"]:checked')?.value || 'low';
-
             const formData = {
                 name: document.getElementById('fullName').value,
                 telegramId: document.getElementById('telegramId').value,
@@ -272,8 +270,16 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)
             })
-            .then(() => showSuccess())
-            .catch(() => showSuccess()) // Ігноруємо помилки CORS для демо
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                showSuccess();
+            })
+            .catch(error => {
+                console.error('Помилка відправки:', error);
+                alert('Помилка! n8n не приймає дані. Перевірте налаштування CORS в n8n Webhook node (Allowed Origins: *).');
+            })
             .finally(() => {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = btnContent;
